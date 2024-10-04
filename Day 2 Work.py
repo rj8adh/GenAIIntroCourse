@@ -10,7 +10,7 @@ def request_API(prompt, tokens: bool = True):
     messages=prompt
 )
 
-  if tokens:  # Attempt to make a seperate box for token printing
+  if tokens:  # Display amount of tokens used
     print(f'\nYou used {response.usage.prompt_tokens} prompt tokens + {response.usage.completion_tokens} completion tokens = {response.usage.total_tokens} tokens\n')
 
   return response.choices[0].message.content.strip()
@@ -19,10 +19,10 @@ def request_API(prompt, tokens: bool = True):
 message_history = []
 user_word = input("Enter word for AI to try and guess: ")
 
-for i in range(1, 21):
+for i in range(1, 21): # Decided to do 1 to 21 to make it convenient for debugging and printing guesses
 
   if i < 20:
-    AI_answer = request_API([{"role": "system", "content": f"(You are playing 20 questions.) You are trying to guess a word that a user has inputted. Ask a simple question which has a definite YES or NO answer to try and guess the word. (Also, here's the message history up to this point {message_history})"}], False)
+    AI_answer = request_API([{"role": "system", "content": f"(You are playing 20 questions.) You are trying to guess a word that a user has inputted, DO NOT PRINT THE QUESTION U R ON. Ask a simple question which has a definite YES or NO answer to try and guess the word. (Also, here's the message history up to this point {message_history})"}], False)
     message_history.append({"role": "system", "content": AI_answer})
     print(AI_answer)
   elif i == 20:
@@ -31,11 +31,18 @@ for i in range(1, 21):
     print(AI_answer)
 
 
-  user_response = input("\nYes or No: ")
+  user_response = input("\nYes, No, or Correct: ")
   message_history.append({"role": "user", "content": user_response})
 
   if user_response.upper() == "QUIT":
+    lose = True
     break
 
-  if user_response.upper() in ['YOU GOT IT', 'CORRECT']:
+  elif user_response.upper() in ['YOU GOT IT', 'CORRECT']:
+    lose = True
     break
+
+if (lose):
+  print(f"You lost in {i} guesses")
+else:
+  print("YOU WIN!!!")
