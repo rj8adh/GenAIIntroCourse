@@ -11,6 +11,16 @@ Day 2 BONUS: Add counterattack messages using AI to write an attack that the ene
 Day 3: Adding Items -- HW will be to add health regen stuff, again, answer sheet will be provided if they get stuck
 """
 
+from openai import OpenAI
+import random
+import time
+import os
+
+# For fancy printing:
+import time
+import sys
+
+
 # Day 1
 def request_API(prompt, tokens: bool=True):
     response = client.chat.completions.create(
@@ -107,9 +117,6 @@ class Weapon:
 def counter_attack(enemy):
     print(request_API([{"role": "user", "content": f"(15 words max )Make an attack that an enemy named {enemy} would use"}]))
 
-import time
-import sys
-
 # Just fancy stuff for slow printing -- NOT NEEDED
 def print_slow(text, sleep_time=0.05):
     for char in text:
@@ -118,9 +125,7 @@ def print_slow(text, sleep_time=0.05):
         time.sleep(sleep_time)
 
 # MAIN GAME: (ORIGINAL)
-from openai import OpenAI
-import random
-import time
+
 
 # REMINDER TO REMOVE API KEY WHEN UPLOADING TO INTERNET -- may teach about .env or just use replit secret
 API_KEY = "KEY"
@@ -162,10 +167,9 @@ if __name__ == "__main__": # MAIN GAME LOOP -- Mix of ALL days
         prompt = input("User: ") # Continues the game after the first input
         print()
 
-        for element in prompt.split():
-            if element.lower() in ['exit', 'break', 'quit', 'bye']:
-                exit = True
-                break
+        if prompt.lower() in ['exit', 'break', 'quit', 'bye']:
+            exit = True
+            break
         if exit:
             break
 
@@ -230,7 +234,7 @@ if __name__ == "__main__": # MAIN GAME LOOP -- Mix of ALL days
                     message_history.append({"role": "user", "content": f"the enemy (with the name of {enemy.name})is now defeated."})
                     break
                 else:
-                    print_slow(f"\nEnemy has {enemy.health} hp left", 0.3)
+                    print_slow(f"\nEnemy has {enemy.health} hp left", 0.05)
 
 
         # Day 2 -- Enemy spawning logic
