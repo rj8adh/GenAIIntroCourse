@@ -128,8 +128,7 @@ def print_slow(text, sleep_time=0.05):
 
 
 # REMINDER TO REMOVE API KEY WHEN UPLOADING TO INTERNET -- may teach about .env or just use replit secret
-API_KEY = "KEY"
-client = OpenAI(api_key=API_KEY)
+client = OpenAI(api_key=os.getenv("API_KEY"))
 
 
 exit = False
