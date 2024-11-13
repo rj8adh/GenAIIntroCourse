@@ -1,4 +1,4 @@
-# TODO Fix bug where script randomly redirects to arabic wikipedia
+# TODO Fix prompt engineering to make results more relevant
 
 import bs4
 import requests
