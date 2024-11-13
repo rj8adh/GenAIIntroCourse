@@ -19,4 +19,5 @@ def request_API(prompt, tokens: bool = True):
 similar = "Minecraft"
 word1 = "Blocks"
 word2 = "Nintendo"
-print(request_API([{"role": "system", "content": f"Return the number 1 if the word: \"{word1}\", is more related to the word: \"{similar}\", than the word \"{word2}\", and return 0 if this is false"}]))
+testList = ["Robloix", "Math", "Minecraft", "Albert Einstein"]
+print(request_API([{"role": "system", "content": f"what are wikipedia speedruns? answer in one sentence"}]))

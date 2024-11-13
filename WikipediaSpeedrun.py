@@ -5,10 +5,28 @@ import requests
 from openai import OpenAI
 import os
 
-BASE_URL = 'https://en.wikipedia.org/wiki'
+BASE_URL = 'https://en.wikipedia.org'
+alphabet = ""
+
+# Not needed in actual assignment, just so I can see how much money im wasting
+def updateTokens(numTokens: int):
+    
+    try:
+        with open('promptTokens.txt', 'r') as file:
+            content = file.read()
+            totalTokens = int(content) if content else 0  # Handle empty file
+    except (FileNotFoundError, ValueError):
+        totalTokens = 0  # Initialize if the file doesn't exist or contains invalid content
+
+    totalTokens += numTokens
+
+    # Write the updated total back to the file
+    with open('promptTokens.txt', 'w') as file:
+        file.write(str(totalTokens))
+
+    return totalTokens
 
 def request_API(prompt, tokens: bool = True):
-
     client = OpenAI(api_key=os.getenv("API_KEY"))
 
     response = client.chat.completions.create(
@@ -18,15 +36,17 @@ def request_API(prompt, tokens: bool = True):
 
     if tokens:  # Attempt to make a seperate box for token printing
         print(f'\nYou used {response.usage.prompt_tokens} prompt tokens + {response.usage.completion_tokens} completion tokens = {response.usage.total_tokens} tokens\n')
+        updateTokens(response.usage.total_tokens)
 
     return response.choices[0].message.content.strip()
 
 def scrapeWikipedia(url: str):
-    print(url)
+    print("LINK YOU\'re SCRAPING: " + url)
     soup = bs4.BeautifulSoup(requests.get(url).content, 'html.parser')
     # print(soup)
 
     output = {}
+    textList = []
     try:
         # Delete all hidden categories(used find because there's only one instance of this class on each webpage)
         hidden_elements = soup.find('div', class_='mw-hidden-catlinks mw-hidden-cats-hidden')
@@ -35,11 +55,14 @@ def scrapeWikipedia(url: str):
         pass
     
     try:
-        # Delete all text hidden behind a button(counts as a click in speedruns so we don't want it)
+        # Delete all junk
         hidden_elements = soup.select('tr', style='display: none;')
+        hidden_elements += soup.select('li', class_='interlanguage-link interwiki-nl mw-list-item')
+        hidden_elements += soup.select('sup', class_='noprint Inline-Template noprint noexcerpt Template-Fact')
 
         for element in hidden_elements:
             element.decompose()
+
     except:
         pass
 
@@ -49,18 +72,19 @@ def scrapeWikipedia(url: str):
     # Loop through all of the page's anchor tags
     for info in page_info:
         # Placeholder so we don't lose a ton of money testing
-        if len(output) <= 10:
+        if len(output) <= 25:
             # Ignores the text that doesn't have a title
             try:
                 # Adds the title & link after splitting irrelevant stuff and stripping whitespaces
-                output[info['title'].split(':')[1].strip()] = info['href']
+                if not 'https://wikimediafoundation.org' in info['href'].split('&')[0]:
+                    output[info['title'].split(':')[1].strip()] = info['href'].split('&')[0]
+                    textList.append(info['title'].split(':')[1].strip())
             except:
                 continue
         else:
             break
-    return output
+    return output, textList
 # print(scrapeWikipedia("https://en.wikipedia.org/wiki/Minecraft"))
-
 
 def includedIn(item: str, dictionary: dict):
 
@@ -70,41 +94,38 @@ def includedIn(item: str, dictionary: dict):
     return False
 # print(includedIn("https://en.wikipedia.org/wiki/Category:Nintendo_Network_games", scrapeWikipedia("https://en.wikipedia.org/wiki/Minecraft")))
 
-
 path = {}
 currentBest = ''
 win = False
 attempts = 0
 
-currentBest = ''
-currentUrl = BASE_URL + "/" + input("Enter starting page ")
+currentUrl = BASE_URL + "/wiki/" + input("Enter starting page ")
 endName = input("Enter ending page ")
-endLink = BASE_URL + "/" + endName
+endLink = BASE_URL + "/wiki/" + endName
 
-currentInfo = scrapeWikipedia(currentUrl)
+currentInfo, linkTextList = scrapeWikipedia(currentUrl)
 print(currentInfo)
 # Check if the end link is on the current page
 while (not includedIn(endLink, currentInfo)) and attempts < 11:
-    for value in currentInfo:
-        if not currentBest:
-            print("CURRENT LINK IS: " + currentInfo[value])
-            currentBest = value
+    try:
+        index = int(request_API([{"role": "system", "content": f"You are a bot trying to end up on the {endName} topic. Choose the most related item to the topic from the following list: {linkTextList}. ONLY RETURN THE INDEX, NO WORDS"}]))
+        print("INDEX IS", index)
+    except:
+        print("Something wrong with chatgpt response, try editing prompt")
+        break
 
-            if attempts != 0:
-                currentUrl = "https://en.wikipedia.org" + currentInfo[value]
+    print(currentInfo)
+    currentLink = currentInfo[linkTextList[index]]
+    print(f"Current Best: {linkTextList[index]}, Link: {BASE_URL + currentLink}")
 
-        else:
-            if 0 == request_API([{"role": "system", "content": f"Return the number 1 if the word: \"{currentBest}\", is more related to the word(s): \"{endName}\", than the word(s) \"{value}\", and return 0 if this is false."}]):
-                currentBest = value
-                currentUrl = "https://en.wikipedia.org" + currentInfo[value]
+    if ("https://" in currentLink):
+        currentInfo, linkTextList = scrapeWikipedia(currentLink)
+    else:
+        currentInfo, linkTextList = scrapeWikipedia(BASE_URL + currentLink)
 
-    print(f"Current Best: {currentBest}, Link: {currentUrl}")
-    currentInfo = scrapeWikipedia(currentUrl)
-    currentBest = ''
+
     attempts += 1
 
-
-        
         
 
 # Feed to ai
