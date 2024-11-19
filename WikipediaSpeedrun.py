@@ -50,14 +50,8 @@ def scrapeWikipedia(url: str):
     try:
         # Delete all hidden categories(used find because there's only one instance of this class on each webpage)
         hidden_elements = soup.find('div', class_='mw-hidden-catlinks mw-hidden-cats-hidden')
-        hidden_elements.decompose()
-    except:
-        pass
-    
-    try:
-        # Delete all junk
-        hidden_elements = soup.select('tr', style='display: none;')
-        hidden_elements += soup.select('li', class_='interlanguage-link interwiki-nl mw-list-item')
+        hidden_elements += soup.select('tr', style='display: none;')
+        hidden_elements += soup.select('li', class_='interlanguage-link')
         hidden_elements += soup.select('sup', class_='noprint Inline-Template noprint noexcerpt Template-Fact')
 
         for element in hidden_elements:
@@ -75,10 +69,15 @@ def scrapeWikipedia(url: str):
         if len(output) <= 25:
             # Ignores the text that doesn't have a title
             try:
+                formattedInfo = info['href'].split('&')[0]
                 # Adds the title & link after splitting irrelevant stuff and stripping whitespaces
-                if not 'https://wikimediafoundation.org' in info['href'].split('&')[0]:
-                    output[info['title'].split(':')[1].strip()] = info['href'].split('&')[0]
-                    textList.append(info['title'].split(':')[1].strip())
+                if not 'https://wikimediafoundation.org' in formattedInfo and not 'BookSources/' in formattedInfo:
+                    if 'https://' in formattedInfo and 'https://en' in formattedInfo: 
+                        output[formattedInfo] = info['href'].split('&')[0]
+                        textList.append(formattedInfo)
+                    if not 'https://' in formattedInfo:
+                        output[formattedInfo] = info['href'].split('&')[0]
+                        textList.append(formattedInfo)
             except:
                 continue
         else:
@@ -108,8 +107,8 @@ print(currentInfo)
 # Check if the end link is on the current page
 while (not includedIn(endLink, currentInfo)) and attempts < 11:
     try:
-        index = int(request_API([{"role": "system", "content": f"You are a bot trying to end up on the {endName} topic. Choose the most related item to the topic from the following list: {linkTextList}. ONLY RETURN THE INDEX, NO WORDS"}]))
-        print("INDEX IS", index)
+        index = int(request_API([{"role": "system", "content": f"You are a bot trying to end up on the {endName} Wikipedia page. Choose the most related item to the topic from the following list: {linkTextList}. ONLY RETURN THE INDEX, NO WORDS"}]))
+        print("SELECTED TEXT IS", linkTextList[index])
     except:
         print("Something wrong with chatgpt response, try editing prompt")
         break
@@ -123,17 +122,4 @@ while (not includedIn(endLink, currentInfo)) and attempts < 11:
     else:
         currentInfo, linkTextList = scrapeWikipedia(BASE_URL + currentLink)
 
-
     attempts += 1
-
-        
-
-# Feed to ai
-
-# Follow links
-
-# Feed to ai, repeat
-
-# Test Speedrun Links
-# https://en.wikipedia.org/wiki/Minecraft
-# https://en.wikipedia.org/wiki/Skibidi_Toilet
