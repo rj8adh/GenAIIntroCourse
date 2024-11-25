@@ -68,4 +68,4 @@ for link in headlineLinks:
 
 for data in articleData:
     print(data)
-    print(request_API([{"role": "system", "content": f"You are a sentiment analysis bot, IN ONE WORD, tell me if the news about {stock[0]} stock positive or negative: {data}."}], False))
+    print(request_API([{"role": "system", "content": f"You are a sentiment analysis bot, IN ONE WORD, tell me if the news about {stock[0]} stock is positive or negative: {data}."}], False))
