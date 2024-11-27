@@ -28,4 +28,6 @@ def request_API(prompt, tokens: bool = True):
 
   return response.choices[0].message.content.strip()
 
+  print("Hey there, welcome to the chatgpt chatbot")
+
   #Code Here
