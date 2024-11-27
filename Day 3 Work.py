@@ -20,8 +20,7 @@ def request_API(prompt, tokens: bool = True):
 # Main game
 # items_crafted = ["Water 💧", "Fire 🔥", "Earth 🌍", "Paneer Tika Masala 🍛"]
 items_crafted = ["Water", "Fire", "Earth", "Paneer Tikka Masala"]
-print("Little Monkadeez")
-print("You gotta get the word: Sigma")
+print("Not So Finite Craft")
 print("-" * 20)
 
 while True:
