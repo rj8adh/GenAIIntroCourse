@@ -25,5 +25,6 @@ while True:
     
     # Keeping track of chat history
     print(AI_answer)
+    history.append({"role": "user", "content": chat})
     history.append({"role": "system", "content": AI_answer})
    
