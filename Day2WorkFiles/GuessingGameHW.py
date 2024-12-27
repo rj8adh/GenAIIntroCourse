@@ -33,7 +33,21 @@ for i in range(1, 21): # Decided to do 1 to 21 to make it convenient for debuggi
       print("Incorrect")
       continue
   
-  AI_answer = request_API([{"role": "system", "content": f"(You are playing 20 questions and you have the word: {ai_word}). Consider the following question: {question}. If this question has no definitive yes or no answer, return 2. If this question is true, return 1. If this question is false return 0. ONLY RETURN A ONE DIGIT NUMBER"}], False)
+  ValidQuestion = request_API([{"role": "system", "content": f"Can the following question be answered with a boolean response: \"how many letters does the work have\". If the question CAN'T be answered with a boolean, return 0. If the question CAN be answered with a boolean, return 1. ONLY RETURN 1 or 0, NO LETTERS"}], False)
+  
+  try:
+    ValidQuestion = int(ValidQuestion)
+  except:
+    print("Question validater gave invalid response(not integer response)")
+    break
+
+  if (ValidQuestion == 1):
+    AI_answer = request_API([{"role": "system", "content": f"(You are playing 20 questions and you have the word: {ai_word}). Consider the following question about your word: {question}. If this question is true, return 1. If this question is false return 0. ONLY RETURN 0, or 1"}], False)
+  else:
+    print("INVALID QUESTION: " + question)
+    i-=1
+    continue
+
   try:
     AI_answer = int(AI_answer)
   except:
@@ -42,11 +56,9 @@ for i in range(1, 21): # Decided to do 1 to 21 to make it convenient for debuggi
   print(AI_answer)
   if (AI_answer == 1):
     print("Yes")
-  elif (AI_answer == 0):
-    print("No")
   else:
-    print("INVALID QUESTION: " + str(AI_answer))
-    i-=1
+    print("No")
+
 
 if (i == 20):
   print(f"You lost =(")

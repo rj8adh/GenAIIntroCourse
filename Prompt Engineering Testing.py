@@ -16,8 +16,5 @@ def request_API(prompt, tokens: bool = True):
 
     return response.choices[0].message.content.strip()
 
-similar = "Minecraft"
-word1 = "Blocks"
-word2 = "Nintendo"
-testList = ["Robloix", "Math", "Minecraft", "Albert Einstein"]
-print(request_API([{"role": "system", "content": f"what are wikipedia speedruns? answer in one sentence"}]))
+print(request_API([{"role": "system", "content": f"Can the following question be answered with a boolean response: \"how many letters does the work have\". If the question CAN'T be answered with a boolean, return 0. If the question CAN be answered with a boolean, return 1. ONLY RETURN 1 or 0, NO LETTERS"}], False))
+
