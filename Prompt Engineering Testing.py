@@ -8,7 +8,8 @@ client = OpenAI(api_key=os.getenv("API_KEY"))
 def request_API(prompt, tokens: bool = True):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=prompt
+        messages=prompt,
+        temperature=.5
 )
 
     if tokens:  # Attempt to make a seperate box for token printing
@@ -16,5 +17,5 @@ def request_API(prompt, tokens: bool = True):
 
     return response.choices[0].message.content.strip()
 
-print(request_API([{"role": "system", "content": f"Can the following question be answered with a boolean response: \"how many letters does the work have\". If the question CAN'T be answered with a boolean, return 0. If the question CAN be answered with a boolean, return 1. ONLY RETURN 1 or 0, NO LETTERS"}], False))
+print(request_API([{"role": "system", "content": f"In one word(only letters), is the question: \"how many letters is the word\" a binary question? It MUST have a DEFINITIVE yes or no reply to be a binary question."}], False))
 
