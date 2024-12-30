@@ -1,4 +1,3 @@
-#TODO Fix prompt engineering to make sure output doesn't work with invalid questions
 from openai import OpenAI
 import os
 
