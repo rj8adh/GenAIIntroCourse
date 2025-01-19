@@ -1,13 +1,15 @@
 """
 Precondition: Required Libraries are imported, variables are instantiated, and request_API is defined(explained in class)
+
 Postcondition: Create an infinite ai chatbot WITH HISTORY that stops when the user types end
-Algorithm: Declare a list called history and initialize it to an empty list
-           While True
-             create a variable called chat that gets user input
-             create a variable called AI_answer which is assigned to the request_API function and gets ChatGPT's response 
-                  to the the user input. (We will explain how to do this)
-              print AI_answer
-              append AI_answer to history using correct format
+
+Algorithm: 
+          Initialize an empty list called history
+          Create an infinite loop
+          Create a variable that gets user input
+          Create a variable that gets ChatGPT's response to the the user input. (We will explain how to do this)
+          Print the AI's response
+          Add the user message and ai response to history
 """
 
 

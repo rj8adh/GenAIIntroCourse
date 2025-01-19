@@ -8,7 +8,8 @@ client = OpenAI(api_key=os.getenv("API_KEY"))
 def request_API(prompt, tokens: bool = True):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=prompt
+        messages=prompt,
+        temperature=.5
 )
 
     if tokens:  # Attempt to make a seperate box for token printing
@@ -16,8 +17,5 @@ def request_API(prompt, tokens: bool = True):
 
     return response.choices[0].message.content.strip()
 
-similar = "Minecraft"
-word1 = "Blocks"
-word2 = "Nintendo"
-testList = ["Robloix", "Math", "Minecraft", "Albert Einstein"]
-print(request_API([{"role": "system", "content": f"what are wikipedia speedruns? answer in one sentence"}]))
+print(request_API([{"role": "system", "content": f"In one word(only letters), is the question: \"how many letters is the word\" a binary question? It MUST have a DEFINITIVE yes or no reply to be a binary question."}], False))
+
